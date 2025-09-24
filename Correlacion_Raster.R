@@ -33,6 +33,9 @@ terra::writeRaster(correlacion, "correlacion_infraestructura_con_numero_de_viaje
 
 
 
+
+
+
 correlacion = spatialEco::rasterCorrelation(x = infraestructura, y = viajes, s = 3)
 correlacion = terra::project(x = correlacion, terra::crs(proyeccion))
 correlacion[correlacion < -1 | correlacion > 1] = NA

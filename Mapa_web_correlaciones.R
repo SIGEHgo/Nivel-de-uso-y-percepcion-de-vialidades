@@ -1,14 +1,21 @@
 ###
+d = sf::read_sf("Datos/rutas_con_numero_de_usos_citydata.geojson")
+d |>  head()
 proyeccion = raster::raster("Datos/carreteras_solo_proyeccion.tif")
 infraestructura = raster::raster("Datos/j_Percepción_infraestructura_vial.tif")
 viajes = raster::raster("Datos/nivel_de_uso_proxy_de_numero_de_viajes.tif")
 
 infraestructura[abs(infraestructura) <  1e-3] = NA
+viajes[viajes > 7000] = 7000
 
 infraestructura = raster::disaggregate(x = infraestructura, fact = 3)
 
 infraestructura = raster::projectRaster(infraestructura, crs = raster::crs(proyeccion)) 
 viajes = raster::projectRaster(viajes, crs = raster::crs(proyeccion))
+
+raster::values(viajes)[!is.na(raster::values(viajes))] |>  hist()
+raster::values(viajes)[!is.na(raster::values(viajes))] |>  quantile()
+
 
 ### Correlacion
 correlacion_pearson_3 = raster::raster("Datos/Correlaciones/correlacion_infraestructura_con_numero_de_viajes_3_pearson.tif")
@@ -66,16 +73,17 @@ mapa = leaflet() |>
               color = "black",
               fillColor = "black",
               fillOpacity = 0.01,
-              weight = 1
+              weight = 1,
+              group = "municipios"
   ) |> 
-  addRasterImage(infraestructura, opacity = 0.7, group = "Percepción infraestructuravial", colors = paleta_infraestructura) |> 
+  addRasterImage(infraestructura, opacity = 0.7, group = "Percepcion infraestructuravial", colors = paleta_infraestructura) |> 
   addLegendNumeric(
     pal = paleta_infraestructura, 
     values = raster::values(infraestructura)[!is.na(raster::values(infraestructura))],  
-    title = "Percepción infraestructuravial", position = "bottomright", group = "Percepción infraestructuravial",
+    title = "Percepcion infraestructuravial", position = "bottomright", group = "Percepcion infraestructuravial",
     orientation = 'horizontal', shape = 'rect', decreasing = FALSE, height = 20, width = 200,
-    labels = c(raster::minValue(infraestructura) |> round(digits = 2), raster::maxValue(infraestructura) |> round(digits = 2)), tickLength = 0
-  )  |> 
+    labels = c("-1", "1"), tickLength = 0
+  ) |> 
   addRasterImage(viajes, opacity = 0.7, group = "Nivel de uso por numero de viaje", colors = paleta_viajes) |> 
   addLegendNumeric(
     pal = paleta_viajes, 
@@ -84,7 +92,6 @@ mapa = leaflet() |>
     orientation = 'horizontal', shape = 'rect', decreasing = FALSE, height = 20, width = 250,
     labels = c(raster::minValue(viajes) |> round(digits = 2), raster::maxValue(viajes) |> round(digits = 2)), tickLength = 0
   ) |> 
-  
   addRasterImage(correlacion_pearson_3, opacity = 0.7, group = "Pearson 3", colors = paleta_correlacion) |> 
   addLegendNumeric(
     pal = paleta_correlacion, 
@@ -93,7 +100,6 @@ mapa = leaflet() |>
     orientation = 'horizontal', shape = 'rect', decreasing = FALSE, height = 20, width = 100,
     labels = c("-1", "1"), tickLength = 0
   ) |> 
-
   addRasterImage(correlacion_pearson_5, opacity = 0.7, group = "Pearson 5", colors = paleta_correlacion) |> 
   addLegendNumeric(
     pal = paleta_correlacion, 
@@ -102,7 +108,6 @@ mapa = leaflet() |>
     orientation = 'horizontal', shape = 'rect', decreasing = FALSE, height = 20, width = 100,
     labels = c("-1", "1"), tickLength = 0
   ) |> 
-  
   addRasterImage(correlacion_pearson_7, opacity = 0.7, group = "Pearson 7", colors = paleta_correlacion) |> 
   addLegendNumeric(
     pal = paleta_correlacion, 
@@ -111,7 +116,6 @@ mapa = leaflet() |>
     orientation = 'horizontal', shape = 'rect', decreasing = FALSE, height = 20, width = 100,
     labels = c("-1", "1"), tickLength = 0
   ) |> 
-  
   addRasterImage(correlacion_spearman_3, opacity = 0.7, group = "Spearman 3", colors = paleta_correlacion) |> 
   addLegendNumeric(
     pal = paleta_correlacion, 
@@ -120,7 +124,6 @@ mapa = leaflet() |>
     orientation = 'horizontal', shape = 'rect', decreasing = FALSE, height = 20, width = 100,
     labels = c("-1", "1"), tickLength = 0
   ) |> 
-  
   addRasterImage(correlacion_spearman_5, opacity = 0.7, group = "Spearman 5", colors = paleta_correlacion) |> 
   addLegendNumeric(
     pal = paleta_correlacion, 
@@ -129,7 +132,6 @@ mapa = leaflet() |>
     orientation = 'horizontal', shape = 'rect', decreasing = FALSE, height = 20, width = 100,
     labels = c("-1", "1"), tickLength = 0
   ) |> 
-  
   addRasterImage(correlacion_spearman_7, opacity = 0.7, group = "Spearman 7", colors = paleta_correlacion) |> 
   addLegendNumeric(
     pal = paleta_correlacion, 
@@ -138,16 +140,59 @@ mapa = leaflet() |>
     orientation = 'horizontal', shape = 'rect', decreasing = FALSE, height = 20, width = 100,
     labels = c("-1", "1"), tickLength = 0
   ) |> 
-  
   addLayersControl(
-    overlayGroups = c("Percepción infraestructuravial", "Nivel de uso por numero de viaje", "Pearson 3", "Pearson 5", "Pearson 7", "Spearman 3", "Spearman 5", "Spearman 7"),
+    overlayGroups = c("Percepcion infraestructuravial", "Nivel de uso por numero de viaje", "Pearson 3", "Pearson 5", "Pearson 7", "Spearman 3", "Spearman 5", "Spearman 7"),
     options = layersControlOptions(collapsed = FALSE)
   ) |> 
-  hideGroup(c("Percepción infraestructuravial", "Nivel de uso por numero de viaje", "Pearson 3","Pearson 5", "Pearson 7", "Spearman 3", "Spearman 5", "Spearman 7"))  
+  hideGroup(c("Percepcion infraestructuravial", "Nivel de uso por numero de viaje", "Pearson 3","Pearson 5", "Pearson 7", "Spearman 3", "Spearman 5", "Spearman 7"))  
 
 mapa
 
 htmlwidgets::saveWidget(mapa, "Mapa_web_Correlaciones.html", selfcontained = T, title = "Correlaciones")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
