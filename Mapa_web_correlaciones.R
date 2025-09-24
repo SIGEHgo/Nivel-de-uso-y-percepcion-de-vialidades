@@ -42,13 +42,13 @@ paleta_correlacion = leaflet::colorNumeric(
   reverse = T
 )
 
-paleta_infraestructura = leaflet::colorNumeric(palette = "Spectral", 
+paleta_infraestructura = leaflet::colorNumeric(palette = "Blues", 
                                                domain = raster::values(infraestructura), 
                                                na.color = "transparent")
 
 paleta_viajes = leaflet::colorNumeric(palette = "RdYlGn", 
                                       domain = raster::values(viajes), 
-                                      na.color = "transparent")
+                                      na.color = "transparent", reverse = T)
 
 
 library(leaflet)
