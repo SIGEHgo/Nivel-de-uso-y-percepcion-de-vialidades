@@ -82,7 +82,7 @@ mapa = leaflet() |>
     values = raster::values(infraestructura)[!is.na(raster::values(infraestructura))],  
     title = "Percepcion infraestructuravial", position = "bottomright", group = "Percepcion infraestructuravial",
     orientation = 'horizontal', shape = 'rect', decreasing = FALSE, height = 20, width = 200,
-    labels = c("-1", "1"), tickLength = 0
+    labels = c("Mala", "Buena"), tickLength = 0
   ) |> 
   addRasterImage(viajes, opacity = 0.7, group = "Nivel de uso por numero de viaje", colors = paleta_viajes) |> 
   addLegendNumeric(
@@ -90,7 +90,7 @@ mapa = leaflet() |>
     values = raster::values(viajes)[!is.na(raster::values(viajes))],  
     title = "Nivel de uso por numero de viaje", position = "bottomright", group = "Nivel de uso por numero de viaje",
     orientation = 'horizontal', shape = 'rect', decreasing = FALSE, height = 20, width = 250,
-    labels = c(raster::minValue(viajes) |> round(digits = 2), raster::maxValue(viajes) |> round(digits = 2)), tickLength = 0
+    labels = c("Baja", "Alta"), tickLength = 0
   ) |> 
   addRasterImage(correlacion_pearson_3, opacity = 0.7, group = "Pearson 3", colors = paleta_correlacion) |> 
   addLegendNumeric(
