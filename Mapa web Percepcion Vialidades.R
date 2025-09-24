@@ -72,9 +72,11 @@ mapa = leaflet() |>
     overlayGroups = c("Percepción infraestructuravial", "Nivel de uso por numero de viaje", "Correlación Rasters", "Correlación Rasters Modificado"),
     options = layersControlOptions(collapsed = FALSE)
   ) |> 
-  hideGroup(c("Nivel de uso por numero de viaje", "Correlación Rasters", "Correlación Rasters Modificado")) |> 
+  hideGroup(c("Nivel de uso por numero de viaje", "Correlación Rasters", "Correlación Rasters Modificado"))  
 
 mapa
 
 
 htmlwidgets::saveWidget(mapa, "Mapa_web_Vialidades_Raster.html",selfcontained = T, title = "Vialidades")
+
+#Preguntar si horizontal
