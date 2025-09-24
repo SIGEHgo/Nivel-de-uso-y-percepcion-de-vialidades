@@ -5,7 +5,7 @@ viajes = raster::raster("Datos/nivel_de_uso_proxy_de_numero_de_viajes.tif")
 correlacion = raster::raster("Datos/correlacion_infraestructura_con_numero_de_viajes.tif")
 correlacion_dos = raster::raster("Datos/correlacion_infraestructura_con_numero_de_viajes_con_menos1.tif")
 
-infraestructura[infraestructura <  1e-3] = NA
+infraestructura[abs(infraestructura) <  1e-3] = NA
 
 raster::plot(infraestructura)
 raster::plot(viajes)
