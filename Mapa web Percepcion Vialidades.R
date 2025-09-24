@@ -1,4 +1,4 @@
-proyeccion = raster::raster("Datos/carreteras.tif")
+proyeccion = raster::raster("Datos/carreteras_solo_proyeccion.tif")
 
 infraestructura = raster::raster("Datos/j_Percepción_infraestructura_vial.tif")
 viajes = raster::raster("Datos/nivel_de_uso_proxy_de_numero_de_viajes.tif")
