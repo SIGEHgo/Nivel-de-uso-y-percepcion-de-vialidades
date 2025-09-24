@@ -1,5 +1,4 @@
-proyeccion = raster::raster("../../Importantes_documentos_usar/Accesibilidad/carreteras.tif")
-proyeccion = terra::rast(proyeccion)
+proyeccion = raster::raster("Datos/carreteras.tif")
 
 infraestructura = raster::raster("Datos/j_Percepción_infraestructura_vial.tif")
 viajes = raster::raster("Datos/nivel_de_uso_proxy_de_numero_de_viajes.tif")
@@ -23,10 +22,12 @@ correlacion = raster::projectRaster(correlacion, crs = raster::crs(proyeccion))
 correlacion_dos = raster::projectRaster(correlacion_dos, crs = raster::crs(proyeccion))
 
 
-terra::plot(infraestructura)
 
 
-##### Municipio #######
+
+### Municipio 
+
+source("Funcion_Github.R")
 mun = sf::read_sf("../../Importantes_documentos_usar/Municipios/municipiosjair.shp")
 git = imagenes_git()
 
@@ -34,20 +35,17 @@ mun = mun |>
   dplyr::select(CVEGEO, NOM_MUN) |> 
   dplyr::left_join(y = git, by = c("NOM_MUN" = "nombre_principal")) |> 
   relocate(links, .after = NOM_MUN)
-#######################
 
 ### Paletas de colores
-# infraestructura = raster::raster("Datos/j_Percepción_infraestructura_vial.tif")
-# infraestructura = raster::projectRaster(infraestructura, crs = raster::crs(proyeccion)) |>  terra::rast()
-# 
-# paleta_infraestructura = leaflet::colorNumeric(palette = "magma",  domain = raster::values(infraestructura), na.color = T)
-# 
-# leaflet() |> 
-#   addTiles() |> 
-#   addRasterImage(infraestructura, opacity = 0.7) |> 
-#   addRasterLegend(values = raster::values(infraestructura), pal = paleta_infraestructura, 
-#                   title = "Percepción infraestructuravial", position = "bottomright")
 
+paleta_infraestructura = leaflet::colorNumeric(palette = "Spectral", domain = raster::values(infraestructura), na.color = "transparent")
+paleta_viajes = leaflet::colorNumeric(palette = "RdYlGn", domain = raster::values(viajes), na.color = "transparent")
+paleta_correlacion = leaflet::colorNumeric(palette = "YlOrRd", domain = raster::values(correlacion), na.color = "transparent")
+paleta_correlacion_dos = leaflet::colorNumeric(palette = "YlOrRd", domain = raster::values(correlacion_dos), na.color = "transparent")
+
+
+
+library(leaflet)
 mapa = leaflet() |> 
   addTiles() |> 
   addPolygons(data = mun, 
@@ -63,14 +61,18 @@ mapa = leaflet() |>
               weight = 1
   ) |> 
   addRasterImage(infraestructura, opacity = 0.7, group = "Percepción infraestructuravial") |> 
+  addLegend(pal = paleta_infraestructura, values = raster::values(infraestructura), title = "Percepción infraestructuravial", position = "bottomright", group = "Percepción infraestructuravial") |> 
   addRasterImage(viajes, opacity = 0.7, group = "Nivel de uso por numero de viaje") |> 
+  addLegend(pal = paleta_viajes, values = raster::values(viajes), title = "Nivel de uso por numero de viaje", position = "bottomright", group = "Nivel de uso por numero de viaje") |> 
   addRasterImage(correlacion, opacity = 0.7, group = "Correlación Rasters") |> 
+  addLegend(pal = paleta_correlacion, values = raster::values(correlacion), title = "Correlación Rasters", position = "bottomright", group = "Correlación Rasters") |> 
   addRasterImage(correlacion_dos, opacity = 0.7, group = "Correlación Rasters Modificado") |> 
+  addLegend(pal = paleta_correlacion_dos, values = raster::values(correlacion_dos), title = "Correlación Rasters Modificado", position = "bottomright", group = "Correlación Rasters Modificado") |> 
   addLayersControl(
     overlayGroups = c("Percepción infraestructuravial", "Nivel de uso por numero de viaje", "Correlación Rasters", "Correlación Rasters Modificado"),
     options = layersControlOptions(collapsed = FALSE)
   ) |> 
-  hideGroup(c("Nivel de uso por numero de viaje", "Correlación Rasters", "Correlación Rasters Modificado"))
+  hideGroup(c("Nivel de uso por numero de viaje", "Correlación Rasters", "Correlación Rasters Modificado")) |> 
 
 mapa
 
