@@ -282,7 +282,7 @@ mapa = leaflet() |>
     pal = paleta_correlacion, 
     values = raster::values(correlacion_pearson_7)[!is.na(raster::values(correlacion_pearson_7))],  
     title = "Correlacion Pearson", position = "bottomright", group = "Correlacion Pearson",
-    orientation = 'horizontal', shape = 'rect', decreasing = FALSE, height = 20, width = 100,
+    orientation = 'horizontal', shape = 'rect', decreasing = FALSE, height = 20, width = 150,
     labels = c("-1", "1"), tickLength = 0
   ) |> 
   addLayersControl(
