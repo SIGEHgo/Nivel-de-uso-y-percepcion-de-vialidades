@@ -230,17 +230,16 @@ mun = mun |>
 paleta_correlacion = leaflet::colorNumeric(
   palette = "Spectral", 
   domain = , seq(-1, 1, 0.001),
-  na.color = "transparent",
-  reverse = T
+  na.color = "transparent"
 )
 
 paleta_infraestructura = leaflet::colorNumeric(palette = "Spectral", 
                                                domain = raster::values(infraestructura), 
-                                               na.color = "transparent", reverse = T)
+                                               na.color = "transparent")
 
 paleta_viajes = leaflet::colorNumeric(palette = "Spectral", 
                                       domain = raster::values(viajes), 
-                                      na.color = "transparent", reverse = T)
+                                      na.color = "transparent")
 
 
 library(leaflet)
