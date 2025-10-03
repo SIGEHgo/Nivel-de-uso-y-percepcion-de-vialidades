@@ -39,6 +39,9 @@ mun = mun |>
 
 
 
+regional = sf::read_sf("../../Importantes_documentos_usar/Regiones_FINAL/Regiones_FINAL.shp")
+regional = sf::st_transform(x = regional, crs = sf::st_crs(mun))
+
 
 ### Paletas de colores
 
@@ -63,19 +66,13 @@ library(leaflegend)
 
 mapa = leaflet() |> 
   addTiles() |> 
-  addPolygons(data = mun, 
-              label = paste0(
-                "<div style='display:flex; align-items:center;'>",
-                "<img src='", mun$links, "' style='width:auto; height:30px; margin-right:5px;'>",
-                "<span>", "<b>", mun$NOM_MUN, "</b>", "</span>",
-                "</div>"
-              ) |> lapply(FUN =  function(x){htmltools::HTML(x)}),
+  addPolygons(data = regional,
+              label = regional$region,
               color = "black",
               fillColor = "black",
               fillOpacity = 0.01,
               weight = 1,
-              group = "municipios"
-  ) |> 
+              group = "regional") |> 
   addRasterImage(infraestructura, opacity = 0.7, group = "Percepcion infraestructuravial", colors = paleta_infraestructura) |> 
   addLegendNumeric(
     pal = paleta_infraestructura, 
@@ -226,6 +223,9 @@ mun = mun |>
   dplyr::left_join(y = git, by = c("NOM_MUN" = "nombre_principal")) |> 
   relocate(links, .after = NOM_MUN)
 
+regional = sf::read_sf("../../Importantes_documentos_usar/Regiones_FINAL/Regiones_FINAL.shp")
+regional = sf::st_transform(x = regional, crs = sf::st_crs(mun))
+
 ### Paletas de colores
 paleta_correlacion = leaflet::colorNumeric(
   palette = "Spectral", 
@@ -247,19 +247,13 @@ library(leaflegend)
 
 mapa = leaflet() |> 
   addTiles() |> 
-  addPolygons(data = mun, 
-              label = paste0(
-                "<div style='display:flex; align-items:center;'>",
-                "<img src='", mun$links, "' style='width:auto; height:30px; margin-right:5px;'>",
-                "<span>", "<b>", mun$NOM_MUN, "</b>", "</span>",
-                "</div>"
-              ) |> lapply(FUN =  function(x){htmltools::HTML(x)}),
+  addPolygons(data = regional,
+              label = regional$region,
               color = "black",
               fillColor = "black",
               fillOpacity = 0.01,
               weight = 1,
-              group = "municipios"
-  ) |> 
+              group = "regional") |>  
   addRasterImage(infraestructura, opacity = 0.7, group = "Percepcion infraestructura vial", colors = paleta_infraestructura) |> 
   addLegendNumeric(
     pal = paleta_infraestructura, 
